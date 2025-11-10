@@ -63,6 +63,20 @@ async function run() {
         res.send(rows)
     });
 
+    // update
+    app.put("/myposts/:id", async(req, res)=>{
+      let id = req.params.id
+      let data = req.body 
+      
+      let objectId = new ObjectId(id)
+      let filter = {_id: objectId}
+      let update = {
+        $set: data
+      }
+      let result =await dbCollection.updateOne(filter, update)
+      res.send(result)
+    })
+
     await client.connect();
     await client.db("admin").command({ ping: 1 });
     console.log("mongodb connectttttttttttttttt");
