@@ -5,7 +5,7 @@ const port = process.env.PORT || 9000;
 app.use(cors());
 app.use(express.json());
 require("dotenv").config()
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 const uri =
   `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@crud.p5kddzk.mongodb.net/?appName=CRUD`;
 const client = new MongoClient(uri, {
@@ -41,6 +41,13 @@ async function run() {
      
      let result = await dbCollection.find().toArray()
      res.send(result)
+   })
+
+   app.get("/allcrops/:id", async(req, res)=>{
+      let id = req.params.id
+      let objectId = new ObjectId(id)
+      let result = await dbCollection.findOne({_id:objectId})
+      res.send(result)
    })
 
 
