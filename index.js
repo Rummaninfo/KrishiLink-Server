@@ -77,6 +77,15 @@ async function run() {
       res.send(result)
     })
 
+    // deleted
+    app.delete("/myposts/:id", async(req, res)=>{
+      let id = req.params.id
+      let objectId = new ObjectId(id)
+      let filter = {_id: objectId}
+      let result =await dbCollection.deleteOne(filter)
+      res.send(result)
+    })
+
     await client.connect();
     await client.db("admin").command({ ping: 1 });
     console.log("mongodb connectttttttttttttttt");
