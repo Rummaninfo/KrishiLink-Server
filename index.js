@@ -50,6 +50,15 @@ async function run() {
       res.send(result)
    })
 
+   // add crop
+    app.post("/allcrops", async(req, res)=>{
+     let data = req.body
+     console.log(data)
+      let result = dbCollection.insertOne(data)
+      res.send({success: true})
+
+    })
+
 
 
 
