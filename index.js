@@ -30,6 +30,7 @@ async function run() {
   try {
     let db = client.db("KrishiLink");
     let dbCollection = db.collection("allCrops");
+    let myinterestProduct = db.collection("myinterest")
 
     app.get("/allcrops", async (req, res) => {
       let result = await dbCollection.find().toArray();
@@ -62,6 +63,10 @@ async function run() {
         .toArray()
         res.send(rows)
     });
+    // my interest
+    app.get("myinterest/byProduct/:id", async(req, res)=>{
+
+    })
 
     // update
     app.put("/myposts/:id", async(req, res)=>{
@@ -84,6 +89,14 @@ async function run() {
       let filter = {_id: objectId}
       let result =await dbCollection.deleteOne(filter)
       res.send(result)
+    })
+
+    // interest
+    app.post("/myinterest", async(req, res)=>{
+      let data = req.body 
+      console.log(data)
+      let result =  await myinterestProduct.insertOne(data)
+      res.send({sucess: true})
     })
 
     await client.connect();
