@@ -30,7 +30,7 @@ async function run() {
   try {
     let db = client.db("KrishiLink");
     let dbCollection = db.collection("allCrops");
-    let myinterestProduct = db.collection("myinterest")
+    let myinterestProduct = db.collection("myinterest");
 
     app.get("/allcrops", async (req, res) => {
       let result = await dbCollection.find().toArray();
@@ -49,7 +49,7 @@ async function run() {
       let data = req.body;
       console.log(data);
       let result = await dbCollection.insertOne(data);
-      res.send({ success: true });
+      res.send(result);
     });
 
     app.get("/myposts", async (req, res) => {
@@ -60,44 +60,61 @@ async function run() {
       let rows = await dbCollection
         .find({ "owner.ownerEmail": email })
         .sort({ createdAt: -1 })
-        .toArray()
-        res.send(rows)
+        .toArray();
+      res.send(rows);
     });
-    // my interest
-    app.get("myinterest/byProduct/:id", async(req, res)=>{
 
-    })
+    // myinterest get
+    app.get("/myinterest", async (req, res) => {
+  try {
+    const email = req.query.email; 
+
+ 
+    // if (!email) {
+    //   return res.status(400).send({ message: "email query required" });
+    // }
+
+    const result = await myinterestProduct
+      .find({ userEmail: email })  // 
+      .toArray();
+
+    res.send(result);
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ message: "Server error" });
+  }
+});
 
     // update
-    app.put("/myposts/:id", async(req, res)=>{
-      let id = req.params.id
-      let data = req.body 
-      
-      let objectId = new ObjectId(id)
-      let filter = {_id: objectId}
+    app.put("/myposts/:id", async (req, res) => {
+      let id = req.params.id;
+      let data = req.body;
+
+      let objectId = new ObjectId(id);
+      let filter = { _id: objectId };
       let update = {
-        $set: data
-      }
-      let result =await dbCollection.updateOne(filter, update)
-      res.send(result)
-    })
+        $set: data,
+      };
+      let result = await dbCollection.updateOne(filter, update);
+      res.send(result);
+    });
 
     // deleted
-    app.delete("/myposts/:id", async(req, res)=>{
-      let id = req.params.id
-      let objectId = new ObjectId(id)
-      let filter = {_id: objectId}
-      let result =await dbCollection.deleteOne(filter)
-      res.send(result)
-    })
+    app.delete("/myposts/:id", async (req, res) => {
+      let id = req.params.id;
+      let objectId = new ObjectId(id);
+      let filter = { _id: objectId };
+      let result = await dbCollection.deleteOne(filter);
+      res.send(result);
+    });
 
     // interest
-    app.post("/myinterest", async(req, res)=>{
-      let data = req.body 
-      console.log(data)
+    app.post("/myinterest", async (req, res) => {
+      let data = req.body;
+      console.log(data);
       let result =  await myinterestProduct.insertOne(data)
-      res.send({sucess: true})
-    })
+      res.send({sucess: true});
+    });
 
     await client.connect();
     await client.db("admin").command({ ping: 1 });
