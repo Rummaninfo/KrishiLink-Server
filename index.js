@@ -66,24 +66,32 @@ async function run() {
 
     // myinterest get
     app.get("/myinterest", async (req, res) => {
-  try {
-    const email = req.query.email; 
+      try {
+        const email = req.query.email;
 
- 
-    // if (!email) {
-    //   return res.status(400).send({ message: "email query required" });
-    // }
+        if (!email) {
+          return res.status(400).send({ message: "email query required" });
+        }
 
-    const result = await myinterestProduct
-      .find({ userEmail: email })  // 
-      .toArray();
+        const result = await myinterestProduct
+          .find({ userEmail: email }) //
+          .toArray();
 
-    res.send(result);
-  } catch (err) {
-    console.log(err);
-    res.status(500).send({ message: "Server error" });
-  }
-});
+        res.send(result);
+      } catch (err) {
+        console.log(err);
+        res.status(500).send({ message: "Server error" });
+      }
+    });
+    // single product interest
+
+    app.get("/requestproducts/:id", async(req, res)=>{
+        let id = req.params.id  
+        let query = {cropId: id}
+        let result = await myinterestProduct.find(query).toArray()
+           res.send(result)
+     
+    })
 
     // update
     app.put("/myposts/:id", async (req, res) => {
@@ -112,8 +120,8 @@ async function run() {
     app.post("/myinterest", async (req, res) => {
       let data = req.body;
       console.log(data);
-      let result =  await myinterestProduct.insertOne(data)
-      res.send({sucess: true});
+      let result = await myinterestProduct.insertOne(data);
+      res.send(result);
     });
 
     await client.connect();
